@@ -42,9 +42,9 @@ def count_pmd_violations():
         return None
     try:
         root = ET.parse(path).getroot()
-        return sum(1 for _ in root.iter("{net.sourceforge.pmd}violation")) or sum(
-            1 for _ in root.iter("violation")
-        )
+        # PMD's report uses a default namespace whose URI includes its schema
+        # version, so match the local tag name instead of hard-coding a URI.
+        return sum(1 for element in root.iter() if element.tag.rsplit("}", 1)[-1] == "violation")
     except ET.ParseError:
         return None
 
